@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conduktor
+  labels:
+    app: conduktor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conduktor
+  template:
+    metadata:
+      labels:
+        app: conduktor
+    spec:
+      containers:
+        - name: conduktor
+          image: conduktor/conduktor-platform:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: CDK_DATABASE_URL
+              value: "postgresql://postgres:postgres@postgresql:5432/conduktor"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: conduktor
+  labels:
+    app: conduktor
+spec:
+  selector:
+    app: conduktor
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: NodePort
